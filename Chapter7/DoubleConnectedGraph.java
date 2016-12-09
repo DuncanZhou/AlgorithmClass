@@ -10,6 +10,8 @@ public class DoubleConnectedGraph {
     //全局变量，因为方法是递归方法
     private int[] DFN = new int[maxsize];
     private int[] L = new int[maxsize];
+    private int num = 1;
+    private Stack<Edge> edge = new Stack<>();
     //结点类，存储结点信息
     class node{
         int id;
@@ -54,8 +56,7 @@ public class DoubleConnectedGraph {
     //输出双向联通图分量,start为深度优先检索的开始结点，parent为start的父结点
     public void PrintDoubleConnectedGraph(DoubleGraph g,int start,int parent){
         //DFN存储深度优先搜索生成树中结点的序号，L为按照公式计算得到的最低深度优先数，edge为栈存储树边和逆边,num计数用,count统计联通分图的数目
-        int num = 1,count = 0;
-        Stack<Edge> edge = new Stack<>();
+        int count = 0;
         DFN[start] = num;
         L[start] = num;
         num++;
@@ -68,6 +69,7 @@ public class DoubleConnectedGraph {
                 if(w != parent && DFN[w] < DFN[start]) {
                     Edge ab = new Edge(start, w);
                     edge.push(ab);
+                   // System.out.println(ab.a + " -> "+ ab.b + "入栈");
                 }
                 //w未访问过
                 if(DFN[w] == 0){
@@ -76,16 +78,12 @@ public class DoubleConnectedGraph {
                     if(L[w] >= DFN[start]){
                         count++;
                         //找到一个割点，打印深度优先生成树的边
-                        System.out.println("new biconnected componet");
-                        Edge ab;
+                        System.out.println("new biconnected componet" + " and 割点为：" + start);
+                        Edge cd;
                         do{
-                            if(!edge.isEmpty()){
-                                ab = edge.pop();
-                                System.out.println(ab.a + " -> " + ab.b);
-                            }
-                            else
-                                break;
-                        }while(ab.compare(start,w) == 1 || ab == null);
+                                cd = edge.pop();
+                                System.out.println(cd.a + " -> " + cd.b);
+                        }while(cd.compare(start,w) != 1);
                     }
                     L[start] = Math.min(L[start],L[w]);
                 }
@@ -94,9 +92,17 @@ public class DoubleConnectedGraph {
             }
         }
     }
+    public void print(int n)
+    {
+        for(int i = 1; i <= n; i++)
+            System.out.println("L" + i + "= " + L[i]);
+        for(int i = 1; i <= n; i++)
+            System.out.println("DFN" + i + "= " + DFN[i]);
+    }
     public static void main(String[] args) {
         DoubleConnectedGraph dcg = new DoubleConnectedGraph();
         DoubleGraph g = dcg.generate();
         dcg.PrintDoubleConnectedGraph(g,1,0);
+    //  dcg.print(g.n);
     }
 }
